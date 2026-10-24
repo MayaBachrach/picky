@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PICKY</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true">P</div>
+      <div class="brand-copy">
+        <h1>PICKY</h1>
+      </div>
+      <span class="version">0.4.6</span>
+    </header>
+
+    <button id="eyedropper" class="button button-dark pick-primary" disabled><svg class="star-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 2.7 5.47 6.03.88-4.36 4.25 1.03 6-5.4-2.83L6.6 19.6l1.03-6-4.36-4.25 6.03-.88L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg> Pick from page</button>
+
+    <section class="hero" aria-label="Selected color">
+      <div class="swatch-wrap">
+        <div id="preview" class="preview" aria-label="Color preview"></div>
+        <input id="colorInput" type="color" value="#FF0088" hidden aria-hidden="true" tabindex="-1">
+      </div>
+      <div class="color-summary">
+        <span class="eyebrow">CURRENT COLOR</span>
+        <div class="hex-line">
+          <span id="hexValue" class="hex-value">#FF0088</span>
+          <button class="icon-button" id="copyHex" aria-label="Copy HEX" title="Copy HEX"><svg class="copy-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M15 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.5"/></svg></button>
+        </div>
+        <div id="copyNotice" class="copy-notice" role="status" aria-live="polite" hidden></div>
+        <span id="colorName" class="muted">Pink</span>
+      </div>
+    </section>
+
+    <section class="palette-section">
+      <div class="section-heading">
+        <h2>Your palette</h2>
+        <button id="clearPalette" class="text-button" disabled>Clear all</button>
+      </div>
+      <div id="palette" class="palette">
+        <div class="empty-state">Your saved colors will live here.</div>
+      </div>
+    </section>
+
+    <section class="formats">
+      <div class="section-heading">
+        <h2>Color values</h2>
+      </div>
+      <button class="format-row" data-format="rgb">
+        <span class="format-label">RGB</span><code id="rgbValue">255, 0, 136</code><span class="copy-glyph"><svg class="copy-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M15 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.5"/></svg></span>
+      </button>
+      <button class="format-row" data-format="hsl">
+        <span class="format-label">HSL</span><code id="hslValue">328, 100%, 50%</code><span class="copy-glyph"><svg class="copy-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M15 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.5"/></svg></span>
+      </button>
+    </section>
+
+    <section class="actions">
+      <button id="saveColor" class="button button-light" disabled><svg class="plus-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Save color</button>
+      <p id="status" class="status" role="status" aria-live="polite" tabindex="0"></p>
+    </section>
+
+
+
+    <footer>
+      <label class="auto-pick-label"><input id="autoPick" type="checkbox" disabled><span class="toggle-track" aria-hidden="true"></span><span>Auto-pick on open</span></label>
+      <span class="credit">Made by Maya Bachrach</span>
+    </footer>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
