@@ -1,7 +1,16 @@
+/**
+ * PICKY service worker: toolbar mode, native picking, and result delivery.
+ *
+ * Manual selections are prepared by popup.js during a physical click. This
+ * worker waits for that popup to close before sending the prepared start signal.
+ * Keep activation-sensitive calls in their existing order; see docs/ARCHITECTURE.md.
+ */
+
 const POPUP = 'popup.html';
 const HANDOFF_DEADLINE_MS = 4000;
 let busy = false;
 
+// Toolbar preference: a normal popup by default, immediate picking when opted in.
 async function syncAction() {
   const { autoPick = false } = await chrome.storage.local.get('autoPick');
   await chrome.action.setPopup({ popup: autoPick === true ? '' : POPUP });
@@ -15,6 +24,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.autoPick) syncAction().catch(console.error);
 });
 
+// Present results without permanently changing the saved toolbar preference.
 async function showWorkspace(windowId) {
   let opened = false;
   try {
@@ -51,6 +61,7 @@ async function samplePage() {
   }
 }
 
+// Persist the selected color, deliver the transient result, then release the lock.
 async function finishPick(tab, outcome) {
   try {
     if (outcome.hex) await chrome.storage.local.set({ lastColor: outcome.hex });
@@ -143,6 +154,7 @@ function startManualPick(tab, sourceDocumentId, token) {
   waitForClosedPopup();
 }
 
+// Only this extension's own popup may request a prepared manual selection.
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (sender.id !== chrome.runtime.id || sender.url !== chrome.runtime.getURL(POPUP)) return;
   if (message?.type !== 'PICK_ARMED' || typeof message.token !== 'string' || !/^[0-9a-f-]{36}$/i.test(message.token) || !Number.isInteger(message.tabId) || message.tabId < 0 || !Number.isInteger(message.windowId) || message.windowId < 0) return;

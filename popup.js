@@ -1,3 +1,11 @@
+/**
+ * PICKY popup: selected color, clipboard feedback, palette, and preferences.
+ *
+ * The native picker must outlive this popup. armPagePicker is serialized into
+ * the page and must remain self-contained. The click handler's first Chrome API
+ * call prepares that page; do not insert asynchronous work before it.
+ */
+
 const $ = (selector) => document.querySelector(selector);
 
 const colorInput = $("#colorInput");
@@ -17,6 +25,7 @@ let activeTab;
 const copyNotice = $("#copyNotice");
 const autoPick = $("#autoPick");
 
+// Color helpers: normalize input before conversion or rendering.
 function normalizeHex(hex) {
   if (typeof hex !== "string") return null;
   let value = hex.trim().replace(/^#/, "");
@@ -79,6 +88,7 @@ function describeColor(hex) {
   return "Color";
 }
 
+// Selected-color rendering and copy feedback.
 function updateColor(hex) {
   const normalized = normalizeHex(hex);
   if (!normalized) return;
@@ -120,6 +130,7 @@ function showStatus(message) {
   statusTimer = setTimeout(() => { statusEl.textContent = ""; }, 8000);
 }
 
+// Saved palette: use separate select/remove buttons for accessible controls.
 function renderPalette() {
   paletteEl.replaceChildren();
   if (!savedColors.length) {
@@ -171,6 +182,7 @@ document.querySelectorAll(".format-row").forEach((button) => {
   });
 });
 
+// Palette writes are serialized and committed to the UI only after storage succeeds.
 async function savePalette(nextColors, successMessage) {
   if (paletteWriteInProgress) return;
   paletteWriteInProgress = true;
@@ -276,6 +288,7 @@ $("#eyedropper").addEventListener("click", () => {
   } catch (error) { failed(`Could not prepare picking: ${error.message}`); }
 });
 
+// Persist the preference before updating the toolbar mode.
 autoPick.addEventListener("change", async () => {
   const requested = autoPick.checked;
   let persisted = false;
@@ -292,6 +305,7 @@ autoPick.addEventListener("change", async () => {
   } finally { autoPick.disabled = false; }
 });
 
+// Restore local state and consume only a result intended for this browser window.
 async function init() {
   const [result, tabs, session] = await Promise.all([
     chrome.storage.local.get(["savedColors", "lastColor", "autoPick"]),

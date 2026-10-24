@@ -1,42 +1,79 @@
 # PICKY
 
-A compact Chrome color picker by Maya Bachrach. Version 0.4.6.
+**Pick a color. Copy its value. Keep it close.**
 
-## Features
+A compact Chrome extension by **Maya Bachrach**, built with plain JavaScript, HTML, and CSS. Current extension version: **0.4.6**.
 
-- Pick a color using the native EyeDropper, with the popup closed during selection.
-- Automatically copy the HEX value; copy RGB and HSL values from the popup.
-- Save up to 15 colors locally, with a single visible row of five swatches.
-- Optional auto-pick when clicking the toolbar icon, disabled by default.
-- Hot pink interface with a star button and stable status-message spacing.
+## What it does
 
-## Install locally
+- Samples colors with Chrome's native EyeDropper, closing the popup so the area beneath it stays accessible.
+- Copies the selected HEX automatically and offers RGB/HSL copy actions.
+- Saves up to 15 colors locally, showing five at a time in a single-row viewport.
+- Offers optional auto-pick on toolbar click, disabled by default.
+- Uses a compact hot-pink interface with feedback beside the selected value and a stable status row.
 
-1. Download this repository as a ZIP and extract it to a permanent folder.
-2. Open `chrome://extensions` in Chrome (version 127 or newer).
-3. Enable **Developer mode** and choose **Load unpacked**.
-4. Select the folder containing `manifest.json` and pin PICKY to the toolbar.
+No account, build step, package installation, backend, or analytics is needed to use this version.
 
-To update an existing local installation, replace the files in the same loaded folder and click **Reload**. Keeping the same folder preserves the extension identity and local saved colors.
+## Install in Chrome
 
-## Development
+Requires Chrome **127 or newer**. This repository provides a local installation; it does not imply a Chrome Web Store release.
 
-Plain HTML, CSS and JavaScript. No build step or package dependencies.
+1. Select **Code → Download ZIP** on this repository and extract it to a permanent folder.
+2. Open `chrome://extensions`.
+3. Enable **Developer mode**, then select **Load unpacked**.
+4. Select the extracted folder containing `manifest.json`.
+5. Pin PICKY to the toolbar and open it on a regular HTTPS page.
 
-- `manifest.json`: extension metadata and permissions.
-- `background.js`: toolbar behavior and native-picker coordination.
-- `popup.js`: palette, copy actions and picker preparation.
-- `popup.html` / `popup.css`: popup interface.
-- `icons/`: packaged extension icons.
+To update an existing local installation, replace the files in the same loaded folder and click **Reload**. Keep the folder path unchanged to preserve the extension's local identity and saved colors. Removing the extension can remove its local data.
+
+## Use it
+
+Click **Pick from page**, choose a screen color, and find its HEX in your clipboard. Use **Save color** to keep it in your palette. Click a saved swatch to select it; use its × to remove it. Click the copy icon or an RGB/HSL row to copy that value.
+
+Enable **Auto-pick on open** if you want a toolbar click to start selection immediately. Press Escape to cancel native selection.
+
+## Read the project
+
+| Guide | Contents |
+| --- | --- |
+| [Product decisions](docs/PRODUCT.md) | Problem, design choices, iteration, and authorship |
+| [Architecture](docs/ARCHITECTURE.md) | File map, picker lifecycle, storage, permissions, and layout |
+| [Validation](docs/VALIDATION.md) | Existing evidence, manual checks, and debugging guidance |
+
+```text
+picky/
+├── manifest.json       Extension registration and permissions
+├── background.js       Toolbar mode and picker coordination
+├── popup.js            Color state, palette, clipboard, preferences
+├── popup.html          Popup structure
+├── popup.css           Theme and layout
+├── icons/              Packaged extension icons
+└── docs/               Product and maintenance documentation
+```
 
 ## Data and permissions
 
-Colors and preferences are stored locally. This version has no analytics or backend and does not transmit data to a server. Permissions: `storage` for preferences and colors; `activeTab` and `scripting` for user-initiated picker preparation; `clipboardWrite` for copying color values.
+Colors and preferences are stored on the local installation. There is no server transmission or analytics in this version. PICKY writes color values to the clipboard and does not read its contents.
+
+The manifest requests `storage`, `activeTab`, `scripting`, and `clipboardWrite`. [The architecture guide explains each permission](docs/ARCHITECTURE.md#permissions). No persistent all-site host permission is requested.
+
+## Development and verification
+
+Edit the source files and reload the extension in Chrome. No build command is required. Optional JavaScript syntax checks:
+
+```sh
+node --check background.js
+node --check popup.js
+```
+
+The author confirmed the native picker flow working on the 0.3.9 baseline. Later versions refined presentation. Development-time simulations covered repeated picking and storage/copy failure paths; they are not a substitute for native-browser testing. See the [manual validation guide](docs/VALIDATION.md) before releasing functional changes.
+
+The picker handoff deliberately preserves activation-sensitive ordering. Read [Architecture](docs/ARCHITECTURE.md) before changing its asynchronous control flow.
 
 ## Store packaging
 
-ZIP the extension files with `manifest.json` at the ZIP root. Exclude Git metadata and development documentation. Store publication also requires listing assets and accurate privacy declarations.
+Create a ZIP containing `manifest.json`, `background.js`, `popup.js`, `popup.html`, `popup.css`, and `icons/`, with `manifest.json` directly at the ZIP root. Exclude Git metadata and documentation. Listing assets and accurate privacy declarations must be prepared separately before submission.
 
-## Validation
+## Credit
 
-The picking flow was confirmed working by the author on the 0.3.9 baseline. Subsequent versions changed presentation only. Simulated regression checks cover repeated selection, cancellation, copying and palette persistence. A full live-browser check is still needed before store publication.
+Product direction, interaction and visual feedback, and hands-on testing: **Maya Bachrach**. Implementation and documentation developed with AI assistance.
